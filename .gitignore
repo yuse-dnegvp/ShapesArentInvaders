@@ -2,3 +2,7 @@ Content/MDL/
 Intermediate/
 Platforms/
 Saved/
+Binaries/
+
+.vs/
+.vsconfig

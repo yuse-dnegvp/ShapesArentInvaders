@@ -3,6 +3,17 @@
 	"EngineAssociation": "{E9FE389C-9FDB-4347-BDD2-7C75AE7B6EB6}",
 	"Category": "",
 	"Description": "",
+	"Modules": [
+		{
+			"Name": "ShapesArentInvaders",
+			"Type": "Runtime",
+			"LoadingPhase": "Default",
+			"AdditionalDependencies": [
+				"Engine",
+				"CoreUObject"
+			]
+		}
+	],
 	"Plugins": [
 		{
 			"Name": "ModelingToolsEditorMode",
@@ -10,6 +21,10 @@
 			"TargetAllowList": [
 				"Editor"
 			]
+		},
+		{
+			"Name": "DNEG_REAL_Telemetry",
+			"Enabled": true
 		}
 	]
 }
