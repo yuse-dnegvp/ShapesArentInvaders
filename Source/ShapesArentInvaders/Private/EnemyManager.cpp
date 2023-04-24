@@ -28,20 +28,84 @@ void UEnemyManager::TickComponent(float DeltaTime, ELevelTick TickType, FActorCo
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-	// ...
+	AnimateHorizontalMovement(DeltaTime);
 }
 
 void UEnemyManager::SpawnEnemiesRow()
 {
-	const float EnemiesIndentation =
-		NumberEnemiesPerRow < 2 ? 0 : (PlayAreaBottomRight.Y - PlayAreaTopLeft.Y) / (NumberEnemiesPerRow - 1);
+	const float EnemiesIndentation = GetEnemiesIndentation(NumberEnemiesPerRow);
+	FEnemiesRow newRow;
 	for (int i = 0; i < NumberEnemiesPerRow; ++i)
 	{
-		AEnemy* SpawnedEnemy = GetWorld()->SpawnActor<AEnemy>(EnemyType, FVector(), FRotator());
-		SpawnedEnemy->SetActorLocation({ 0.0f, PlayAreaTopLeft.Y + i * EnemiesIndentation, PlayAreaTopLeft.Z });
-		Enemies.Add(SpawnedEnemy);
+		const FVector Location{0.0f, GetEnemyInitialHorizontalPosition(i, EnemiesIndentation), SpawnArea2D.Max.Y};
+		AEnemy* SpawnedEnemy = GetWorld()->SpawnActor<AEnemy>(EnemyType, Location, FRotator());
+		newRow.Enemies.Add(SpawnedEnemy);
+	}
 
-		UE_LOG(LogTemp, Display, TEXT("Enemy #%d has been spawned!"), Enemies.Num());
+	EnemyRows.Add(newRow);
+
+	UE_LOG(LogTemp, Display, TEXT("Enemies row #%d has been spawned!"), EnemyRows.Num());
+}
+
+float UEnemyManager::GetEnemiesIndentation(int EnemiesPerRow) const
+{
+	return EnemiesPerRow < 2 ? 0 : SpawnArea2D.GetSize().X / (EnemiesPerRow - 1);
+}
+
+float UEnemyManager::GetEnemyInitialHorizontalPosition(int Index, float EnemiesIndentation) const
+{
+	return SpawnArea2D.Min.X + Index * EnemiesIndentation;
+}
+
+void UEnemyManager::AnimateHorizontalMovement(float DeltaTime)
+{
+	for (const auto& row : EnemyRows)
+	{
+		const int NumberEnemies = row.Enemies.Num();
+		if (NumberEnemies < 1)
+		{
+			continue;
+		}
+
+		// Determine a horizontal space that enemies move in.
+		const float MovementSpace =
+			FMath::Min(SpawnArea2D.Min.X - PlayArea2D.Min.X, PlayArea2D.Max.X - SpawnArea2D.Max.X);
+
+		// Calculate the movement speed of enimies.
+		const float LastMovementProgress = (HorizontalMovementShift / MovementSpace + 1.0f) / 2.0f;
+		const float AnimationSpeed = HorizontalMovementInitialSpeed + HorizontalMovementMaxSpeed * FMath::Sin(LastMovementProgress * PI);
+
+		// Calculate the next step in the horizontal move (either left or right).
+		// Change the movement direction, if we reached the edge of the play area.
+		float AnimationDelta = DeltaTime * AnimationSpeed;
+		if (FMath::Abs(HorizontalMovementShift) + AnimationDelta > MovementSpace)
+		{
+			HorizontalMovementDirection = HorizontalMovementDirection == EnemiesHorizontalMovementDirection::Left
+				? EnemiesHorizontalMovementDirection::Right
+				: EnemiesHorizontalMovementDirection::Left;
+		}
+		if (HorizontalMovementDirection == EnemiesHorizontalMovementDirection::Left)
+		{
+			AnimationDelta *= -1;
+		}
+
+		// Apply the calculated step.
+		HorizontalMovementShift += AnimationDelta;
+
+#if 0
+		UE_LOG(LogTemp, Display, TEXT(">>> Progress: %f; Speed: %f; Horizontal Shift: %f"),
+			HorizontalMovementShift / MovementSpace, AnimationSpeed, HorizontalMovementShift);
+#endif
+
+		// Shift enimies horizontally in accodance with the calculated value
+		const float EnemiesIndentation = GetEnemiesIndentation(row.Enemies.Num());
+		for (int i = 0; i < row.Enemies.Num(); ++i)
+		{
+			AEnemy* enemy = row.Enemies[i];
+			FVector Location = enemy->GetActorLocation();
+			Location.Y = GetEnemyInitialHorizontalPosition(i, EnemiesIndentation) + HorizontalMovementShift;
+			enemy->SetActorLocation(Location);
+		}
 	}
 }
 

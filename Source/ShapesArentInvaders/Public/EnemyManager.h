@@ -9,6 +9,17 @@
 #include "EnemyManager.generated.h"
 
 
+USTRUCT(BlueprintType)
+struct FEnemiesRow
+{
+	GENERATED_BODY()
+
+	// Array of the enemies in the row.
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TArray<AEnemy*> Enemies;
+};
+
+
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class SHAPESARENTINVADERS_API UEnemyManager : public UActorComponent
 {
@@ -34,21 +45,37 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TSubclassOf<AEnemy> EnemyType = AEnemy::StaticClass();
 
-	// Play Area top left coordinate
+	// Play Area is the area where enemies are moving in
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	FVector3f PlayAreaTopLeft = {0.0f, 0.0f, 1.0f};
+	FBox2D PlayArea2D = {{-500.0f, 0.0f}, {500.0f, 1000.0f}};
 
-	// Play Area bottom right coordinate
+	// Spawn Area is the area where enemies are spawning in
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	FVector3f PlayAreaBottomRight = {0.0f, 1.0f, 0.0f};
+	FBox2D SpawnArea2D = {{-400.0f, 0.0f}, {400.0f, 800.0f}};
 
 	// Play Area bottom right coordinate
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int NumberEnemiesPerRow = 5;
 
+	// Initial speed of horizontal movement of the enemies
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float HorizontalMovementInitialSpeed = 25.0f;
+
+	// Max speed of horizontal movement of the enemies
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float HorizontalMovementMaxSpeed = 75.0f;
+
 	// Spawned enemies
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TArray<AEnemy*> Enemies;
+	TArray<FEnemiesRow> EnemyRows;
 
-		
+private:
+	float GetEnemiesIndentation(int EnemiesPerRow) const;
+	float GetEnemyInitialHorizontalPosition(int Index, float EnemiesIndentation) const;
+	void AnimateHorizontalMovement(float DeltaTime);
+
+private:
+	enum class EnemiesHorizontalMovementDirection : uint8 { Left, Right };
+	EnemiesHorizontalMovementDirection HorizontalMovementDirection = EnemiesHorizontalMovementDirection::Right;
+	float HorizontalMovementShift = 0.0f;
 };
