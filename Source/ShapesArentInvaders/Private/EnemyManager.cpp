@@ -71,18 +71,26 @@ void UEnemyManager::AnimateHorizontalMovement(float DeltaTime)
 		const float MovementSpace =
 			FMath::Min(SpawnArea2D.Min.X - PlayArea2D.Min.X, PlayArea2D.Max.X - SpawnArea2D.Max.X);
 
-		// Calculate the movement speed of enimies.
+		// Calculate the movement speed of enemies.
 		const float LastMovementProgress = (HorizontalMovementShift / MovementSpace + 1.0f) / 2.0f;
 		const float AnimationSpeed = HorizontalMovementInitialSpeed + HorizontalMovementMaxSpeed * FMath::Sin(LastMovementProgress * PI);
 
 		// Calculate the next step in the horizontal move (either left or right).
 		// Change the movement direction, if we reached the edge of the play area.
 		float AnimationDelta = DeltaTime * AnimationSpeed;
-		if (FMath::Abs(HorizontalMovementShift) + AnimationDelta > MovementSpace)
+		if (HorizontalMovementDirection == EnemiesHorizontalMovementDirection::Left)
 		{
-			HorizontalMovementDirection = HorizontalMovementDirection == EnemiesHorizontalMovementDirection::Left
-				? EnemiesHorizontalMovementDirection::Right
-				: EnemiesHorizontalMovementDirection::Left;
+			if (HorizontalMovementShift - AnimationDelta < -MovementSpace)
+			{
+				HorizontalMovementDirection = EnemiesHorizontalMovementDirection::Right;
+			}
+		}
+		else
+		{
+			if (HorizontalMovementShift + AnimationDelta > MovementSpace)
+			{
+				HorizontalMovementDirection = EnemiesHorizontalMovementDirection::Left;
+			}
 		}
 		if (HorizontalMovementDirection == EnemiesHorizontalMovementDirection::Left)
 		{
