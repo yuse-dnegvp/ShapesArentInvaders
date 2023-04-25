@@ -39,6 +39,9 @@ void UEnemyManager::SpawnEnemiesRow()
 	{
 		const FVector Location{0.0f, GetEnemyInitialHorizontalPosition(i, EnemiesIndentation), SpawnArea2D.Max.Y};
 		AEnemy* SpawnedEnemy = GetWorld()->SpawnActor<AEnemy>(EnemyType, Location, FRotator());
+
+		SpawnedEnemy->Strength = static_cast<EEnemyStrength>(FMath::RandRange(0, static_cast<int>(EEnemyStrength::LAST_ELEMENT)));
+		SpawnedEnemy->UpdateMaterial();
 		newRow.Enemies.Add(SpawnedEnemy);
 	}
 

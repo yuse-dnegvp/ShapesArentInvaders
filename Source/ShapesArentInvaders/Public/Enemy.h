@@ -12,7 +12,8 @@ enum class EEnemyStrength : uint8
 {
 	Weak,
 	Normal,
-	Strong
+	Strong,
+	LAST_ELEMENT = Strong
 };
 
 UCLASS()
@@ -32,6 +33,8 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+	void UpdateMaterial();
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	EEnemyStrength Strength;
 
@@ -47,8 +50,8 @@ private:
 		bool bFromSweep,
 		const FHitResult& Hit);
 
-private:
 	UPROPERTY(EditAnywhere)
-	UStaticMeshComponent* BoxCollider = nullptr;
+	UStaticMeshComponent* BoxStaticMesh = nullptr;
 
+	UMaterialInstanceDynamic* ChecherboardMaterial = nullptr;
 };

@@ -3,9 +3,26 @@
 
 #include "Enemy.h"
 #include "Projectile.h"
+#include "Materials/MaterialInstanceConstant.h"
 
 namespace {
 	constexpr float MAX_HEALTH = 100.0f;
+	constexpr int CHECKERBOARD_NUMBER_SQUARES = 2;
+	constexpr float CHECKERBOARD_TEXTURE_NUMBER_QUARES = 2.0f;
+
+	constexpr int GetNumberHitsBeforeDeath(EEnemyStrength Strength)
+	{
+		switch (Strength)
+		{
+		case EEnemyStrength::Weak:
+			return 3;
+		case EEnemyStrength::Normal:
+			return 5;
+		case EEnemyStrength::Strong:
+		default:
+			return 15;
+		}
+	}
 }
 
 // Sets default values
@@ -21,15 +38,19 @@ void AEnemy::BeginPlay()
 {
 	Super::BeginPlay();
 
-	BoxCollider = this->FindComponentByClass<UStaticMeshComponent>();
-	BoxCollider->OnComponentBeginOverlap.AddDynamic(this, &AEnemy::OnCollision);
+	BoxStaticMesh = this->FindComponentByClass<UStaticMeshComponent>();
+	BoxStaticMesh->OnComponentBeginOverlap.AddDynamic(this, &AEnemy::OnCollision);
+
+	ChecherboardMaterial = UMaterialInstanceDynamic::Create(BoxStaticMesh->GetMaterial(0), this);
+	BoxStaticMesh->SetMaterial(0, ChecherboardMaterial);
+
+	UpdateMaterial();
 }
 
 // Called every frame
 void AEnemy::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
 }
 
 void AEnemy::OnCollision(UPrimitiveComponent* OverlappedComponent,
@@ -44,23 +65,23 @@ void AEnemy::OnCollision(UPrimitiveComponent* OverlappedComponent,
 	{
 		projectile->Destroy();
 
-		float damage;
-		switch (Strength)
-		{
-		case EEnemyStrength::Weak:
-			damage = MAX_HEALTH / 3.0f;
-			break;
-		case EEnemyStrength::Normal:
-			damage = MAX_HEALTH / 5.0f;
-			break;
-		case EEnemyStrength::Strong:
-		default:
-			damage = MAX_HEALTH / 15.0f;
-		}
-		Health = FMath::Floor(Health - damage);
+		const int NumberHits = GetNumberHitsBeforeDeath(Strength);
+		const float Damage = MAX_HEALTH / NumberHits;
+		Health = FMath::Floor(Health - Damage);
+
 		if (Health <= 0.0f)
 		{
 			Destroy();
+			return;
 		}
+
+		UpdateMaterial();
 	}
+}
+
+void AEnemy::UpdateMaterial()
+{
+	const int NumberHits = GetNumberHitsBeforeDeath(Strength);
+	const float UVMultiplier = FMath::CeilToFloat(Health / 100.0f * NumberHits) / CHECKERBOARD_NUMBER_SQUARES;
+	ChecherboardMaterial->SetScalarParameterValue(FName(TEXT("UVMultiplier")), UVMultiplier);
 }
