@@ -2,6 +2,7 @@
 
 
 #include "Enemy.h"
+#include "Projectile.h"
 
 // Sets default values
 AEnemy::AEnemy()
@@ -15,7 +16,9 @@ AEnemy::AEnemy()
 void AEnemy::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
+	BoxCollider = this->FindComponentByClass<UStaticMeshComponent>();
+	BoxCollider->OnComponentBeginOverlap.AddDynamic(this, &AEnemy::OnCollision);
 }
 
 // Called every frame
@@ -25,3 +28,18 @@ void AEnemy::Tick(float DeltaTime)
 
 }
 
+void AEnemy::OnCollision(UPrimitiveComponent* OverlappedComponent,
+	AActor* OtherActor,
+	UPrimitiveComponent* OtherComponent,
+	int32 OtherBodyIndex,
+	bool bFromSweep,
+	const FHitResult& Hit)
+{
+	AProjectile* projectile = Cast<AProjectile>(OtherActor);
+	if (projectile)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("BOOM!"));
+		projectile->Destroy();
+		Destroy();
+	}
+}
