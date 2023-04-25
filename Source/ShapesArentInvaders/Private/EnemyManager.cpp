@@ -110,6 +110,11 @@ void UEnemyManager::AnimateHorizontalMovement(float DeltaTime)
 		for (int i = 0; i < row.Enemies.Num(); ++i)
 		{
 			AEnemy* enemy = row.Enemies[i];
+			if (!enemy)
+			{
+				continue;
+			}
+
 			FVector Location = enemy->GetActorLocation();
 			Location.Y = GetEnemyInitialHorizontalPosition(i, EnemiesIndentation) + HorizontalMovementShift;
 			enemy->SetActorLocation(Location);

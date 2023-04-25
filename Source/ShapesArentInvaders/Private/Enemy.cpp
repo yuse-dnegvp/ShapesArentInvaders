@@ -4,12 +4,16 @@
 #include "Enemy.h"
 #include "Projectile.h"
 
+namespace {
+	constexpr float MAX_HEALTH = 100.0f;
+}
+
 // Sets default values
 AEnemy::AEnemy()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-
+	Health = MAX_HEALTH;
 }
 
 // Called when the game starts or when spawned
@@ -38,8 +42,25 @@ void AEnemy::OnCollision(UPrimitiveComponent* OverlappedComponent,
 	AProjectile* projectile = Cast<AProjectile>(OtherActor);
 	if (projectile)
 	{
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("BOOM!"));
 		projectile->Destroy();
-		Destroy();
+
+		float damage;
+		switch (Strength)
+		{
+		case EEnemyStrength::Weak:
+			damage = MAX_HEALTH / 3.0f;
+			break;
+		case EEnemyStrength::Normal:
+			damage = MAX_HEALTH / 5.0f;
+			break;
+		case EEnemyStrength::Strong:
+		default:
+			damage = MAX_HEALTH / 15.0f;
+		}
+		Health = FMath::Floor(Health - damage);
+		if (Health <= 0.0f)
+		{
+			Destroy();
+		}
 	}
 }

@@ -7,6 +7,14 @@
 #include "GameFramework/Actor.h"
 #include "Enemy.generated.h"
 
+UENUM()
+enum class EEnemyStrength : uint8
+{
+	Weak,
+	Normal,
+	Strong
+};
+
 UCLASS()
 class SHAPESARENTINVADERS_API AEnemy : public AActor
 {
@@ -23,6 +31,12 @@ protected:
 public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	EEnemyStrength Strength;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float Health;
 
 private:
 	UFUNCTION()
