@@ -3,6 +3,7 @@
 
 #include "Enemy.h"
 #include "Projectile.h"
+#include "ShapesArentInvadersGameMode.h"
 #include "Materials/MaterialInstanceConstant.h"
 
 namespace {
@@ -65,16 +66,26 @@ void AEnemy::OnCollision(UPrimitiveComponent* OverlappedComponent,
 	{
 		projectile->Destroy();
 
+		// Update my health
 		const int NumberHits = GetNumberHitsBeforeDeath(Strength);
 		const float Damage = MAX_HEALTH / NumberHits;
 		Health = FMath::Floor(Health - Damage);
 
 		if (Health <= 0.0f)
-		{
+		{	// Notify the Game Mode that I was killed
+			AShapesArentInvadersGameMode* GameMode = Cast<AShapesArentInvadersGameMode>(GetWorld()->GetAuthGameMode());
+			GameMode->OnEnemyKilled();
+
+			// I'm dead
 			Destroy();
 			return;
 		}
 
+		// Notify the Game Mode that I was hit
+		AShapesArentInvadersGameMode* GameMode = Cast<AShapesArentInvadersGameMode>(GetWorld()->GetAuthGameMode());
+		GameMode->OnEnemyHit();
+		
+		// Update my checkerboard look
 		UpdateMaterial();
 	}
 }
