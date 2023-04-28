@@ -3,7 +3,8 @@ Intermediate/
 Platforms/
 Saved/
 Binaries/
-packages/
+Packages/
+Build/
 
 .vs/
 .vsconfig
