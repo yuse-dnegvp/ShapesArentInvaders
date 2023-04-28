@@ -3,10 +3,11 @@
 #pragma once
 
 #include "Enemy.h"
-
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 #include "EnemyManager.generated.h"
+
+class AShapesArentInvadersGameMode;
 
 
 USTRUCT(BlueprintType)
@@ -74,8 +75,12 @@ private:
 	float GetEnemyInitialHorizontalPosition(int Index, float EnemiesIndentation) const;
 	void AnimateHorizontalMovement(float DeltaTime);
 
-private:
+	UFUNCTION()
+	void OnEnemyHit(AEnemy* Target, AProjectile* Projectile);
+
 	enum class EnemiesHorizontalMovementDirection : uint8 { Left, Right };
 	EnemiesHorizontalMovementDirection HorizontalMovementDirection = EnemiesHorizontalMovementDirection::Right;
 	float HorizontalMovementShift = 0.0f;
+
+	AShapesArentInvadersGameMode* GameMode;
 };

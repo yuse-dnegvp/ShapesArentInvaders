@@ -2,6 +2,8 @@
 
 
 #include "EnemyManager.h"
+#include "Projectile.h"
+#include "ShapesArentInvadersGameMode.h"
 
 // Sets default values for this component's properties
 UEnemyManager::UEnemyManager()
@@ -9,8 +11,6 @@ UEnemyManager::UEnemyManager()
 	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
 	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = true;
-
-	// ...
 }
 
 
@@ -19,7 +19,7 @@ void UEnemyManager::BeginPlay()
 {
 	Super::BeginPlay();
 
-	// ...
+	GameMode = Cast<AShapesArentInvadersGameMode>(GetWorld()->GetAuthGameMode());
 }
 
 
@@ -42,6 +42,7 @@ void UEnemyManager::SpawnEnemiesRow()
 
 		SpawnedEnemy->Strength = static_cast<EEnemyStrength>(FMath::RandRange(0, static_cast<int>(EEnemyStrength::LAST_ELEMENT)));
 		SpawnedEnemy->UpdateMaterial();
+		SpawnedEnemy->OnHit.AddDynamic(this, &UEnemyManager::OnEnemyHit);
 		newRow.Enemies.Add(SpawnedEnemy);
 	}
 
@@ -108,7 +109,7 @@ void UEnemyManager::AnimateHorizontalMovement(float DeltaTime)
 			HorizontalMovementShift / MovementSpace, AnimationSpeed, HorizontalMovementShift);
 #endif
 
-		// Shift enimies horizontally in accodance with the calculated value
+		// Shift enemies horizontally in accordance with the calculated value
 		const float EnemiesIndentation = GetEnemiesIndentation(row.Enemies.Num());
 		for (int i = 0; i < row.Enemies.Num(); ++i)
 		{
@@ -125,3 +126,26 @@ void UEnemyManager::AnimateHorizontalMovement(float DeltaTime)
 	}
 }
 
+void UEnemyManager::OnEnemyHit(AEnemy* Target, AProjectile* Projectile)
+{
+	Projectile->Destroy();
+
+	// Update targets's health
+	const float Damage = Target->MaxHealth / Target->GetHitTolerance();
+	Target->Health = FMath::Floor(Target->Health - Damage);
+
+	// Notify the Game Mode that the target was hit
+	GameMode->OnEnemyHit();
+
+	if (Target->Health <= 0.0f)
+	{	// Notify the Game Mode that the target was killed
+		GameMode->OnEnemyKilled();
+
+		// The target is dead
+		Target->Destroy();
+		return;
+	}
+
+	// Update target's checkerboard look
+	Target->UpdateMaterial();
+}

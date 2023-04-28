@@ -3,9 +3,13 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Components/StaticMeshComponent.h"
 #include "GameFramework/Actor.h"
+#include "UObject/SparseDelegate.h"
 #include "Enemy.generated.h"
+
+class AEnemy;
+class AProjectile;
+class UStaticMeshComponent;
 
 UENUM()
 enum class EEnemyStrength : uint8
@@ -15,6 +19,8 @@ enum class EEnemyStrength : uint8
 	Strong,
 	LAST_ELEMENT = Strong
 };
+
+DECLARE_DYNAMIC_MULTICAST_SPARSE_DELEGATE_TwoParams(FEnemyHitSignature, AEnemy, OnHit, AEnemy*, Target, AProjectile*, Projectile);
 
 UCLASS()
 class SHAPESARENTINVADERS_API AEnemy : public AActor
@@ -35,11 +41,21 @@ public:
 
 	void UpdateMaterial();
 
+	// Number of hits the Enemy can stand before it' dies's being killed
+	int GetHitTolerance() const;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	EEnemyStrength Strength;
+	float MaxHealth;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float Health;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	EEnemyStrength Strength;
+
+	// Event called when this enemy is being hit
+	UPROPERTY(BlueprintAssignable, Category = "Collision")
+	FEnemyHitSignature OnHit;
 
 private:
 	UFUNCTION()
