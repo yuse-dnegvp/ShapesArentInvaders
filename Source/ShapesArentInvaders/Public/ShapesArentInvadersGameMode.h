@@ -23,4 +23,6 @@ public:
 	void OnEnemyKilled();
 	void OnEnemyKilled_Implementation();
 
+	UFUNCTION(BlueprintCallable)
+	void QuitGame();
 };

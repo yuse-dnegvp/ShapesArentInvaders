@@ -143,6 +143,35 @@ void UEnemyManager::OnEnemyHit(AEnemy* Target, AProjectile* Projectile)
 
 		// The target is dead
 		Target->Destroy();
+
+		// Remove the dead enemy from its container row,
+		// and calculate alive enemies
+		int NumberAliveEnemies = 0;
+		for (int i = 0; i < EnemyRows.Num(); ++i)
+		{
+			FEnemiesRow& Row = EnemyRows[i];
+			for (int j = 0; j < Row.Enemies.Num(); ++j)
+			{
+				if (Row.Enemies[j])
+				{
+					if (Row.Enemies[j] == Target)
+					{
+						Row.Enemies[j] = nullptr;
+						continue;
+					}
+					++NumberAliveEnemies;
+				}
+			}
+		}
+
+		// Are we done with the enemies?
+		const auto AllEnemiesInRowAreDead = [](const FEnemiesRow& Row) {
+			return std::all_of(Row.Enemies.begin(), Row.Enemies.end(), [](const AEnemy* Enemy) { return Enemy == nullptr; });
+		};
+		if (std::all_of(EnemyRows.begin(), EnemyRows.end(), AllEnemiesInRowAreDead))
+		{
+			GameMode->QuitGame();
+		}
 		return;
 	}
 
