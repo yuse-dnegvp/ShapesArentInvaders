@@ -3,7 +3,7 @@
 
 #include "EnemyManager.h"
 #include "Projectile.h"
-#include "ShapesArentInvadersGameMode.h"
+#include "GameModeMain.h"
 
 // Sets default values for this component's properties
 UEnemyManager::UEnemyManager()
@@ -19,7 +19,7 @@ void UEnemyManager::BeginPlay()
 {
 	Super::BeginPlay();
 
-	GameMode = Cast<AShapesArentInvadersGameMode>(GetWorld()->GetAuthGameMode());
+	GameMode = Cast<AGameModeMain>(GetWorld()->GetAuthGameMode());
 }
 
 

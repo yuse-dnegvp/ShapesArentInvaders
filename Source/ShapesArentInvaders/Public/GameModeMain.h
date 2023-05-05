@@ -4,13 +4,13 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/GameMode.h"
-#include "ShapesArentInvadersGameMode.generated.h"
+#include "GameModeMain.generated.h"
 
 /**
- * 
+ *
  */
 UCLASS()
-class SHAPESARENTINVADERS_API AShapesArentInvadersGameMode : public AGameMode
+class SHAPESARENTINVADERS_API AGameModeMain : public AGameModeBase
 {
 	GENERATED_BODY()
 

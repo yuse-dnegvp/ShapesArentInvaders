@@ -1,20 +1,20 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "ShapesArentInvadersGameMode.h"
+#include "GameModeMain.h"
 #include "Kismet/KismetSystemLibrary.h"
 
-void AShapesArentInvadersGameMode::OnEnemyHit_Implementation()
+void AGameModeMain::OnEnemyHit_Implementation()
 {
 
 }
 
-void AShapesArentInvadersGameMode::OnEnemyKilled_Implementation()
+void AGameModeMain::OnEnemyKilled_Implementation()
 {
 
 }
 
-void AShapesArentInvadersGameMode::QuitGame()
+void AGameModeMain::QuitGame()
 {
 	UKismetSystemLibrary::QuitGame(this, nullptr, EQuitPreference::Quit, false);
 }

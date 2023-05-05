@@ -7,7 +7,7 @@
 #include "Components/ActorComponent.h"
 #include "EnemyManager.generated.h"
 
-class AShapesArentInvadersGameMode;
+class AGameModeMain;
 
 
 USTRUCT(BlueprintType)
@@ -82,5 +82,5 @@ private:
 	EnemiesHorizontalMovementDirection HorizontalMovementDirection = EnemiesHorizontalMovementDirection::Right;
 	float HorizontalMovementShift = 0.0f;
 
-	AShapesArentInvadersGameMode* GameMode;
+	AGameModeMain* GameMode;
 };
