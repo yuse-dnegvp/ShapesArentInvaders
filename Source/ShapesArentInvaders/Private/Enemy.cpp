@@ -34,12 +34,6 @@ void AEnemy::BeginPlay()
 	UpdateMaterial();
 }
 
-// Called every frame
-void AEnemy::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-}
-
 void AEnemy::OnCollision(UPrimitiveComponent* OverlappedComponent,
 	AActor* OtherActor,
 	UPrimitiveComponent* OtherComponent,

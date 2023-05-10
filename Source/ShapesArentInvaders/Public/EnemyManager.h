@@ -33,13 +33,13 @@ public:
 
 protected:
 	// Called when the game starts
-	virtual void BeginPlay() override;
+	void BeginPlay() override;
 
 public:
 	// Called every frame
-	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+	void TickComponent(float DeltaTime, ELevelTick TickType,
+		FActorComponentTickFunction* ThisTickFunction) override;
 
-public:
 	UFUNCTION(BlueprintCallable)
 	void SpawnEnemiesRow();
 
@@ -79,8 +79,8 @@ private:
 	UFUNCTION()
 	void OnEnemyHit(AEnemy* Target, AProjectile* Projectile, APlayerPawn* Ofender);
 
-	enum class EnemiesHorizontalMovementDirection : uint8 { Left, Right };
-	EnemiesHorizontalMovementDirection HorizontalMovementDirection = EnemiesHorizontalMovementDirection::Right;
+	enum class EEnemiesHorizontalMovementDirection : uint8 { Left, Right };
+	EEnemiesHorizontalMovementDirection HorizontalMovementDirection = EEnemiesHorizontalMovementDirection::Right;
 	float HorizontalMovementShift = 0.0f;
 
 	AGameModeMain* GameMode;

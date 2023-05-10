@@ -83,21 +83,21 @@ void UEnemyManager::AnimateHorizontalMovement(float DeltaTime)
 		// Calculate the next step in the horizontal move (either left or right).
 		// Change the movement direction, if we reached the edge of the play area.
 		float AnimationDelta = DeltaTime * AnimationSpeed;
-		if (HorizontalMovementDirection == EnemiesHorizontalMovementDirection::Left)
+		if (HorizontalMovementDirection == EEnemiesHorizontalMovementDirection::Left)
 		{
 			if (HorizontalMovementShift - AnimationDelta < -MovementSpace)
 			{
-				HorizontalMovementDirection = EnemiesHorizontalMovementDirection::Right;
+				HorizontalMovementDirection = EEnemiesHorizontalMovementDirection::Right;
 			}
 		}
 		else
 		{
 			if (HorizontalMovementShift + AnimationDelta > MovementSpace)
 			{
-				HorizontalMovementDirection = EnemiesHorizontalMovementDirection::Left;
+				HorizontalMovementDirection = EEnemiesHorizontalMovementDirection::Left;
 			}
 		}
-		if (HorizontalMovementDirection == EnemiesHorizontalMovementDirection::Left)
+		if (HorizontalMovementDirection == EEnemiesHorizontalMovementDirection::Left)
 		{
 			AnimationDelta *= -1;
 		}
