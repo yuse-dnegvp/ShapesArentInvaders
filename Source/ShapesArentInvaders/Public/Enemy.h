@@ -8,6 +8,7 @@
 #include "Enemy.generated.h"
 
 class AEnemy;
+class APlayerPawn;
 class AProjectile;
 class UStaticMeshComponent;
 
@@ -20,7 +21,8 @@ enum class EEnemyStrength : uint8
 	LAST_ELEMENT = Strong
 };
 
-DECLARE_DYNAMIC_MULTICAST_SPARSE_DELEGATE_TwoParams(FEnemyHitSignature, AEnemy, OnHit, AEnemy*, Target, AProjectile*, Projectile);
+DECLARE_DYNAMIC_MULTICAST_SPARSE_DELEGATE_ThreeParams(FEnemyHitSignature, AEnemy, OnHit, AEnemy*, Target,
+	AProjectile*, Projectile, APlayerPawn*, Ofender);
 
 UCLASS()
 class SHAPESARENTINVADERS_API AEnemy : public AActor

@@ -3,6 +3,7 @@
 
 #include "Enemy.h"
 #include "Projectile.h"
+#include "PlayerPawn.h"
 #include "Components/StaticMeshComponent.h"
 #include "Materials/MaterialInstanceDynamic.h"
 
@@ -49,7 +50,8 @@ void AEnemy::OnCollision(UPrimitiveComponent* OverlappedComponent,
 	AProjectile* Projectile = Cast<AProjectile>(OtherActor);
 	if (Projectile)
 	{
-		OnHit.Broadcast(this, Projectile);
+		auto Ofender = Cast<APlayerPawn>(Projectile->GetInstigator());
+		OnHit.Broadcast(this, Projectile, Ofender);
 	}
 }
 

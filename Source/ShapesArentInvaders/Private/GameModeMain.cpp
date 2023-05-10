@@ -4,17 +4,17 @@
 #include "GameModeMain.h"
 #include "Kismet/KismetSystemLibrary.h"
 
-void AGameModeMain::OnEnemyHit_Implementation()
+void AGameModeMain::OnEnemyHit_Implementation(AEnemy* Target, APlayerPawn* Ofender)
 {
 
 }
 
-void AGameModeMain::OnEnemyKilled_Implementation()
+void AGameModeMain::OnEnemyKilled_Implementation(AEnemy* Target, APlayerPawn* Ofender)
 {
 
 }
 
-void AGameModeMain::QuitGame()
+void AGameModeMain::OnAllEnemiesKilled_Implementation()
 {
-	UKismetSystemLibrary::QuitGame(this, nullptr, EQuitPreference::Quit, false);
+
 }

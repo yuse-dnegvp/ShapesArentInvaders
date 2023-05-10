@@ -2,6 +2,7 @@
 
 
 #include "EnemyManager.h"
+#include "PlayerPawn.h"
 #include "Projectile.h"
 #include "GameModeMain.h"
 
@@ -126,7 +127,7 @@ void UEnemyManager::AnimateHorizontalMovement(float DeltaTime)
 	}
 }
 
-void UEnemyManager::OnEnemyHit(AEnemy* Target, AProjectile* Projectile)
+void UEnemyManager::OnEnemyHit(AEnemy* Target, AProjectile* Projectile, APlayerPawn* Ofender)
 {
 	Projectile->Destroy();
 
@@ -135,11 +136,11 @@ void UEnemyManager::OnEnemyHit(AEnemy* Target, AProjectile* Projectile)
 	Target->Health = FMath::Floor(Target->Health - Damage);
 
 	// Notify the Game Mode that the target was hit
-	GameMode->OnEnemyHit();
+	GameMode->OnEnemyHit(Target, Ofender);
 
 	if (Target->Health <= 0.0f)
 	{	// Notify the Game Mode that the target was killed
-		GameMode->OnEnemyKilled();
+		GameMode->OnEnemyKilled(Target, Ofender);
 
 		// The target is dead
 		Target->Destroy();
@@ -170,7 +171,7 @@ void UEnemyManager::OnEnemyHit(AEnemy* Target, AProjectile* Projectile)
 		};
 		if (std::all_of(EnemyRows.begin(), EnemyRows.end(), AllEnemiesInRowAreDead))
 		{
-			GameMode->QuitGame();
+			GameMode->OnAllEnemiesKilled();
 		}
 		return;
 	}

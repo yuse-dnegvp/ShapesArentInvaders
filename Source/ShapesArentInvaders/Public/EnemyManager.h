@@ -7,8 +7,9 @@
 #include "Components/ActorComponent.h"
 #include "EnemyManager.generated.h"
 
+class APlayerPawn;
+class AProjectile;
 class AGameModeMain;
-
 
 USTRUCT(BlueprintType)
 struct FEnemiesRow
@@ -76,7 +77,7 @@ private:
 	void AnimateHorizontalMovement(float DeltaTime);
 
 	UFUNCTION()
-	void OnEnemyHit(AEnemy* Target, AProjectile* Projectile);
+	void OnEnemyHit(AEnemy* Target, AProjectile* Projectile, APlayerPawn* Ofender);
 
 	enum class EnemiesHorizontalMovementDirection : uint8 { Left, Right };
 	EnemiesHorizontalMovementDirection HorizontalMovementDirection = EnemiesHorizontalMovementDirection::Right;

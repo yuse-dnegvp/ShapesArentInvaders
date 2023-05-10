@@ -6,6 +6,9 @@
 #include "GameFramework/GameMode.h"
 #include "GameModeMain.generated.h"
 
+class AEnemy;
+class APlayerPawn;
+
 /**
  *
  */
@@ -16,13 +19,14 @@ class SHAPESARENTINVADERS_API AGameModeMain : public AGameModeBase
 
 public:
 	UFUNCTION(BlueprintNativeEvent)
-	void OnEnemyHit();
-	void OnEnemyHit_Implementation();
+	void OnEnemyHit(AEnemy* Target, APlayerPawn* Ofender);
+	void OnEnemyHit_Implementation(AEnemy* Target, APlayerPawn* Ofender);
 
 	UFUNCTION(BlueprintNativeEvent)
-	void OnEnemyKilled();
-	void OnEnemyKilled_Implementation();
+	void OnEnemyKilled(AEnemy* Target, APlayerPawn* Ofender);
+	void OnEnemyKilled_Implementation(AEnemy* Target, APlayerPawn* Ofender);
 
-	UFUNCTION(BlueprintCallable)
-	void QuitGame();
+	UFUNCTION(BlueprintNativeEvent)
+	void OnAllEnemiesKilled();
+	void OnAllEnemiesKilled_Implementation();
 };
