@@ -24,7 +24,7 @@
 		},
 		{
 			"Name": "DNEG_REAL_Telemetry",
-			"Enabled": true
+			"Enabled": false
 		},
 		{
 			"Name": "Bridge",
